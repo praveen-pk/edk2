@@ -765,6 +765,7 @@ PeiLoadImageLoadImage (
   }
 
   DEBUG_CODE_END ();
+  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "PPK: Load Done\n"));
 
   DEBUG ((DEBUG_INFO | DEBUG_LOAD, "\n"));
 

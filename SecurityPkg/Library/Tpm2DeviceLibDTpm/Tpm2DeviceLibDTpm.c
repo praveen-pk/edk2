@@ -123,5 +123,6 @@ Tpm2DeviceLibConstructor (
   VOID
   )
 {
+  DEBUG ((DEBUG_INFO, "PPK: %a\n", __FUNCTION__));
   return InternalTpm2DeviceLibDTpmCommonConstructor ();
 }

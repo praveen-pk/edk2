@@ -397,6 +397,7 @@ HashLibBaseCryptoRouterPeiConstructor (
   IN CONST EFI_PEI_SERVICES  **PeiServices
   )
 {
+  DEBUG ((DEBUG_INFO, "PPK: %a\n", __FUNCTION__));
   EFI_STATUS          Status;
   HASH_INTERFACE_HOB  *HashInterfaceHob;
 

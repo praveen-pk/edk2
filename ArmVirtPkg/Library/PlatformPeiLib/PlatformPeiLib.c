@@ -55,6 +55,7 @@ PlatformPeim (
   CONST UINT32  *RangesProp;
   UINT64        UartBase;
   UINT64        TpmBase;
+  UINT64        TpmBase2;
   EFI_STATUS    Status;
 
   Base = (VOID *)(UINTN)PcdGet64 (PcdDeviceTreeInitialBaseAddress);
@@ -64,6 +65,7 @@ PlatformPeim (
   FdtSize  = fdt_totalsize (Base) + PcdGet32 (PcdDeviceTreeAllocationPadding);
   FdtPages = EFI_SIZE_TO_PAGES (FdtSize);
   NewBase  = AllocatePages (FdtPages);
+  DEBUG ((DEBUG_INFO, "PPK: FdtSize = %lx, FdtPages=%lx NewBase=%lx \n",FdtSize, FdtPages, NewBase));
   ASSERT (NewBase != NULL);
   fdt_open_into (Base, NewBase, EFI_PAGES_TO_SIZE (FdtPages));
 
@@ -93,6 +95,7 @@ PlatformPeim (
     }
 
     Compatible = fdt_getprop (Base, Node, "compatible", &Len);
+    DEBUG ((DEBUG_INFO, "PPK: Compatible = %s \n",Compatible));
 
     //
     // Iterate over the NULL-separated items in the compatible string
@@ -102,6 +105,7 @@ PlatformPeim (
     {
       if (AsciiStrCmp (CompItem, "arm,pl011") == 0) {
         NodeStatus = fdt_getprop (Base, Node, "status", &StatusLen);
+        DEBUG ((DEBUG_INFO, "PPK: NodeStatus = %s \n",NodeStatus));
         if ((NodeStatus != NULL) && (AsciiStrCmp (NodeStatus, "okay") != 0)) {
           continue;
         }
@@ -118,14 +122,20 @@ PlatformPeim (
       } else if (FeaturePcdGet (PcdTpm2SupportEnabled) &&
                  (AsciiStrCmp (CompItem, "tcg,tpm-tis-mmio") == 0))
       {
+        DEBUG ((DEBUG_INFO, "PPK: Component:: tcg,tpm-tis-mmio **PcdTpm2SupportEnabled \n"));
         RegProp = fdt_getprop (Base, Node, "reg", &Len);
+        DEBUG ((DEBUG_INFO, "PPK: Len= %d  \n",Len));
         ASSERT (Len == 8 || Len == 16);
         if (Len == 8) {
           TpmBase = fdt32_to_cpu (RegProp[0]);
+          DEBUG ((DEBUG_INFO, "PPK: 32 Len= %d  TpmBase=%lx \n",Len, TpmBase));
+
         } else if (Len == 16) {
           TpmBase = fdt64_to_cpu (ReadUnaligned64 ((UINT64 *)RegProp));
+          DEBUG ((DEBUG_INFO, "PPK: 64 Len= %d  TpmBase=%lx \n",Len, TpmBase));
         }
 
+        DEBUG ((DEBUG_INFO, "PPK: Depth = %d\n", Depth));
         if (Depth > 1) {
           //
           // QEMU/mach-virt may put the TPM on the platform bus, in which case
@@ -156,8 +166,10 @@ PlatformPeim (
 
             if (Len == 8) {
               TpmBase -= fdt32_to_cpu (RangesProp[0]);
+              DEBUG ((DEBUG_INFO, "PPK: Len= %d  TpmBase=%lx Depth = %d \n",Len, TpmBase, Depth));
             } else {
               TpmBase -= fdt64_to_cpu (ReadUnaligned64 ((UINT64 *)RangesProp));
+              DEBUG ((DEBUG_INFO, "PPK: Len= %d  TpmBase=%lx Depth = %d \n",Len, TpmBase, Depth));
             }
 
             //
@@ -165,23 +177,30 @@ PlatformPeim (
             //
             RangesProp = (UINT32 *)((UINT8 *)RangesProp + Len / 2);
             TpmBase   += fdt64_to_cpu (ReadUnaligned64 ((UINT64 *)RangesProp));
+            DEBUG ((DEBUG_INFO, "PPK: Len= %d  TpmBase=%lx Depth = %d \n",Len, TpmBase, Depth));
           }
         }
-
+        DEBUG((DEBUG_INFO, "PPK: Breaking.."));
         break;
       }
     }
   }
 
   if (FeaturePcdGet (PcdTpm2SupportEnabled)) {
+      DEBUG ((DEBUG_INFO, "PPK: TpmBase : 0x%lx \n",TpmBase));
+
     if (TpmBase != 0) {
       DEBUG ((DEBUG_INFO, "%a: TPM @ 0x%lx\n", __FUNCTION__, TpmBase));
 
       Status = (EFI_STATUS)PcdSet64S (PcdTpmBaseAddress, TpmBase);
+
+      //TpmBase2 = PcdGet64(PcdTpmBaseAddress);
+      //DEBUG ((DEBUG_INFO, "TPM PcdTpmBaseAddress = 0x%lx\n", TpmBase2));
       ASSERT_EFI_ERROR (Status);
 
       Status = PeiServicesInstallPpi (&mTpm2DiscoveredPpi);
     } else {
+      DEBUG ((DEBUG_INFO, "PPK: **mTpm2InitializationDonePpi \n"));
       Status = PeiServicesInstallPpi (&mTpm2InitializationDonePpi);
     }
 

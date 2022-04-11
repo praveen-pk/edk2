@@ -548,13 +548,18 @@ MmioRead8 (
 {
   UINT8    Value;
   BOOLEAN  Flag;
+  DEBUG ((DEBUG_INFO, "PPK1: ioLibArmVirt.c %a \n", __FUNCTION__));
 
   Flag = FilterBeforeMmIoRead (FilterWidth8, Address, &Value);
+  DEBUG ((DEBUG_INFO, "PPK2: ioLibArmVirt.c %a \n", __FUNCTION__));
+
   if (Flag) {
     Value = MmioRead8Internal (Address);
   }
+  DEBUG ((DEBUG_INFO, "PPK3: ioLibArmVirt.c %a \n", __FUNCTION__));
 
   FilterAfterMmIoRead (FilterWidth8, Address, &Value);
+  DEBUG ((DEBUG_INFO, "PPK4: ioLibArmVirt.c %a \n", __FUNCTION__));
 
   return Value;
 }

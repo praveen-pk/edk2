@@ -47,15 +47,18 @@ Tpm2IsPtpPresence (
   )
 {
   UINT8  RegRead;
+  DEBUG ((DEBUG_INFO, "PPK: %a Start, Reg = %x\n", __FUNCTION__, Reg));
 
   RegRead = MmioRead8 ((UINTN)Reg);
+  DEBUG ((DEBUG_INFO, "PPK: %a MMIO Done\n", __FUNCTION__));
+
   if (RegRead == 0xFF) {
     //
     // No TPM chip
     //
     return FALSE;
   }
-
+DEBUG ((DEBUG_INFO, "PPK: %a Done\n", __FUNCTION__));
   return TRUE;
 }
 
@@ -421,24 +424,26 @@ Tpm2GetPtpInterface (
 {
   PTP_CRB_INTERFACE_IDENTIFIER   InterfaceId;
   PTP_FIFO_INTERFACE_CAPABILITY  InterfaceCapability;
-
+  DEBUG ((DEBUG_INFO, "PPK1: %a Register = %x\n", __FUNCTION__, Register));
   if (!Tpm2IsPtpPresence (Register)) {
+    DEBUG ((DEBUG_INFO, "PPK1: %a NO Tpm2IsPtpPresence\n", __FUNCTION__));
     return Tpm2PtpInterfaceMax;
   }
-
+DEBUG ((DEBUG_INFO, "PPK1.1: %a\n", __FUNCTION__));
   //
   // Check interface id
   //
   InterfaceId.Uint32         = MmioRead32 ((UINTN)&((PTP_CRB_REGISTERS *)Register)->InterfaceId);
+DEBUG ((DEBUG_INFO, "PPK1.2: %a\n", __FUNCTION__));
   InterfaceCapability.Uint32 = MmioRead32 ((UINTN)&((PTP_FIFO_REGISTERS *)Register)->InterfaceCapability);
-
+DEBUG ((DEBUG_INFO, "PPK1.3: %a\n", __FUNCTION__));
   if ((InterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_CRB) &&
       (InterfaceId.Bits.InterfaceVersion == PTP_INTERFACE_IDENTIFIER_INTERFACE_VERSION_CRB) &&
       (InterfaceId.Bits.CapCRB != 0))
   {
     return Tpm2PtpInterfaceCrb;
   }
-
+DEBUG ((DEBUG_INFO, "PPK2: %a\n", __FUNCTION__));
   if ((InterfaceId.Bits.InterfaceType == PTP_INTERFACE_IDENTIFIER_INTERFACE_TYPE_FIFO) &&
       (InterfaceId.Bits.InterfaceVersion == PTP_INTERFACE_IDENTIFIER_INTERFACE_VERSION_FIFO) &&
       (InterfaceId.Bits.CapFIFO != 0) &&
@@ -446,7 +451,7 @@ Tpm2GetPtpInterface (
   {
     return Tpm2PtpInterfaceFifo;
   }
-
+DEBUG ((DEBUG_INFO, "PPK3: %a\n", __FUNCTION__));
   return Tpm2PtpInterfaceTis;
 }
 

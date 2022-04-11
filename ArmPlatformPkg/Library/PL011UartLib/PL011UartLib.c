@@ -83,6 +83,7 @@ PL011UartInitializePort (
   HardwareFifoDepth = FixedPcdGet16 (PcdUartDefaultReceiveFifoDepth);
   if (HardwareFifoDepth == 0) {
     UartPid2          = MmioRead32 (UartBase + UARTPID2);
+    DEBUG ((DEBUG_INFO, "PPK: %a MMIO Done\n", __FUNCTION__));
     HardwareFifoDepth = (PL011_UARTPID2_VER (UartPid2) > PL011_VER_R1P4) ? 32 : 16;
   }
 

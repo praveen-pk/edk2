@@ -48,6 +48,7 @@ Tcg2ConfigPeimEntryPoint (
 {
   UINTN       Size;
   EFI_STATUS  Status;
+  DEBUG ((DEBUG_INFO, "PPK: %a\n", __FUNCTION__));
 
   DEBUG ((DEBUG_INFO, "%a\n", __FUNCTION__));
 

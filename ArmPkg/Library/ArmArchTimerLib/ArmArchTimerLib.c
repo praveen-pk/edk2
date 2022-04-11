@@ -30,6 +30,7 @@ TimerConstructor (
   VOID
   )
 {
+  DEBUG ((DEBUG_INFO, "PPK: %a\n", __FUNCTION__));
   //
   // Check if the ARM Generic Timer Extension is implemented.
   //

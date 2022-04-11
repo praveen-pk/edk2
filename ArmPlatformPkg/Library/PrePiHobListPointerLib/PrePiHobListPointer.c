@@ -25,6 +25,7 @@ PrePeiGetHobList (
   VOID
   )
 {
+  DEBUG ((DEBUG_INFO, "PPK: %a\n", __FUNCTION__));
   return (VOID *)ArmReadTpidrurw ();
 }
 

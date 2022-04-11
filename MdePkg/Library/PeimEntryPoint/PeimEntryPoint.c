@@ -31,17 +31,20 @@ _ModuleEntryPoint (
   IN CONST EFI_PEI_SERVICES  **PeiServices
   )
 {
+  DEBUG ((DEBUG_INFO, "PPK: %a\n", __FUNCTION__));
+
   if (_gPeimRevision != 0) {
     //
     // Make sure that the PEI spec revision of the platform is >= PEI spec revision of the driver
     //
     ASSERT ((*PeiServices)->Hdr.Revision >= _gPeimRevision);
   }
-
+DEBUG ((DEBUG_INFO, "PPK:ProcessLibraryConstructorList start %a\n", __FUNCTION__));
   //
   // Call constructor for all libraries
   //
   ProcessLibraryConstructorList (FileHandle, PeiServices);
+  DEBUG ((DEBUG_INFO, "PPK:ProcessLibraryConstructorList Done%a\n", __FUNCTION__));
 
   //
   // Call the driver entry point
@@ -68,5 +71,6 @@ EfiMain (
   IN CONST EFI_PEI_SERVICES  **PeiServices
   )
 {
+  DEBUG ((DEBUG_INFO, "PPK: %a\n", __FUNCTION__));
   return _ModuleEntryPoint (FileHandle, PeiServices);
 }

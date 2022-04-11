@@ -50,6 +50,8 @@ InternalTpm2DeviceLibDTpmCommonConstructor (
   VOID
   )
 {
+
+DEBUG ((DEBUG_INFO, "PPK: %a Start\n", __FUNCTION__));
   mActiveTpmInterfaceType = 0xFF;
   mCRBIdleByPass          = 0xFF;
 
@@ -61,6 +63,6 @@ InternalTpm2DeviceLibDTpmCommonConstructor (
   if (mActiveTpmInterfaceType == Tpm2PtpInterfaceCrb) {
     mCRBIdleByPass = Tpm2GetIdleByPass ((VOID *)(UINTN)PcdGet64 (PcdTpmBaseAddress));
   }
-
+DEBUG ((DEBUG_INFO, "PPK: %a Done\n", __FUNCTION__));
   return EFI_SUCCESS;
 }

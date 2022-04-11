@@ -39,6 +39,8 @@ DetectTpmDevice (
   EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariablePpi;
   UINTN                            Size;
 
+  DEBUG ((DEBUG_INFO, "PPK: Detect TPM\n"));
+
   Status = PeiServicesGetBootMode (&BootMode);
   ASSERT_EFI_ERROR (Status);
 

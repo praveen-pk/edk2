@@ -31,6 +31,7 @@ SetPeiServicesTablePointer (
   IN CONST EFI_PEI_SERVICES  **PeiServicesTablePointer
   )
 {
+  DEBUG ((DEBUG_INFO, "PPK: %a\n", __FUNCTION__));
   ArmWriteTpidrurw ((UINTN)PeiServicesTablePointer);
 }
 

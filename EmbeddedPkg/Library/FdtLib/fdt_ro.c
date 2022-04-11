@@ -52,6 +52,7 @@
 
 #include <fdt.h>
 #include <libfdt.h>
+#include <Library/DebugLib.h>
 
 #include "libfdt_internal.h"
 
@@ -310,6 +311,8 @@ fdt_get_name (
   int         *len
   )
 {
+    DEBUG ((DEBUG_INFO, "PPK1: %a \n", __FUNCTION__));
+
   const struct fdt_node_header  *nh = _fdt_offset_ptr (fdt, nodeoffset);
   int                           err;
 
@@ -323,6 +326,7 @@ fdt_get_name (
     *len = strlen (nh->name);
   }
 
+  DEBUG ((DEBUG_INFO, "PPK: %a fdt name %s \n", __FUNCTION__, nh->name));
   return nh->name;
 
 fail:
